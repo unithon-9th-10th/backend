@@ -4,6 +4,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import center.unit.beggar.dto.ApiResponse;
+import center.unit.beggar.member.dto.response.MemberResponse;
+import center.unit.beggar.member.model.Member;
 import center.unit.beggar.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 
@@ -14,11 +17,14 @@ public class MemberController {
 
 	private final MemberService memberService;
 
-
-	//TODO : Response 타입 변경
 	@PostMapping("/signup")
-	public void signUp() {
-		Long memberId = memberService.joinMember();
+	public ApiResponse<MemberResponse> signUp() {
+		Member member = memberService.joinMember();
+
+		MemberResponse response = MemberResponse.builder()
+			.memberId(member.getMemberId())
+			.build();
+		return ApiResponse.success(response);
 	}
 
 

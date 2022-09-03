@@ -1,8 +1,9 @@
 package center.unit.beggar.member;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import center.unit.beggar.challenge.service.ChallengeService;
+import center.unit.beggar.member.dto.response.MemberDetailResponse;
+import center.unit.beggar.member.model.MemberStatus;
+import org.springframework.web.bind.annotation.*;
 
 import center.unit.beggar.dto.ApiResponse;
 import center.unit.beggar.member.dto.response.MemberResponse;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final ChallengeService challengeService;
 
 	@PostMapping("/signup")
 	public ApiResponse<MemberResponse> signUp() {
@@ -25,6 +27,19 @@ public class MemberController {
 			.memberId(member.getMemberId())
 			.build();
 		return ApiResponse.success(response);
+	}
+
+	@GetMapping("/{memberId}")
+	public ApiResponse<MemberDetailResponse> getMemberDetail(
+			@PathVariable Long memberId
+	) {
+		MemberStatus memberStatus = challengeService.resolveMemberStatus(memberId);
+		return ApiResponse.success(
+				MemberDetailResponse.builder()
+						.memberId(memberId)
+						.status(memberStatus)
+						.build()
+		);
 	}
 
 

@@ -16,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import center.unit.beggar.challenge.dto.request.ChallengePostDto;
 import center.unit.beggar.challenge.dto.response.ChallengeMemberInfoVo;
 import center.unit.beggar.challenge.dto.response.ChallengeRankResponse;
+import center.unit.beggar.challenge.dto.response.ChallengeResultResponse;
 import center.unit.beggar.challenge.model.Challenge;
 import center.unit.beggar.challenge.repository.ChallengeRepository;
 import center.unit.beggar.comment.model.BeggarType;
@@ -115,6 +116,17 @@ public class ChallengeService {
 			.build();
 	}
 
+	public ChallengeResultResponse getResultList(Long challengeId) {
+		Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(ChallengeNotFoundException::new);
+		List<ChallengeMemberInfoVo> challengeMemberInfoVos = getChallengeMemberInfoVos(challengeId);
+		return ChallengeResultResponse.builder()
+			.startDate(challenge.getStartDate())
+			.endDate(challenge.getEndDate())
+			.challengeDays(challenge.getChallengeDays())
+			.amount(challenge.getAmount())
+			.rankingList(challengeMemberInfoVos)
+			.build();
+	}
 	public List<ChallengeMemberInfoVo> getChallengeMemberInfoVos(Long challengeId) {
 		List<MemberChallenge> memberChallenges = memberChallengeRepository.findByChallenge_challengeId(
 			challengeId);
@@ -134,6 +146,7 @@ public class ChallengeService {
 
 		return infoVos;
 	}
+
 
 	public ChallengeMemberInfoVo getChallengeMemberInfo(MemberChallenge memberChallenge) {
 		int beggarPoint = 50;

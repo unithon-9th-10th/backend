@@ -61,6 +61,7 @@ public class ChallengeService {
 		return hasRunningChallenge ? MemberStatus.RUNNING : MemberStatus.FINISHED;
 	}
 
+	@Transactional
 	public Challenge saveChallengeByRequestDto(ChallengePostDto requestDto) {
 		Challenge challenge = Challenge.builder()
 			.title(requestDto.getTitle())
@@ -178,13 +179,16 @@ public class ChallengeService {
 
 		// (긍정 코멘트 개수 - 부정 피드백 개수) * 가중치(10)
 		beggarPoint += (higherCommentCount - lowerCommentCount) * 10;
+		if (beggarPoint < 0) {
+			beggarPoint = 0;
+		}
 
 		return ChallengeMemberInfoVo.builder()
 			.memberId(memberChallenge.getMember().getMemberId())
 			.memberNickname(memberChallenge.getMemberNickname())
 			.usedAmount(usedAmount)
 			.remainAmount(remainAmount)
-			.beggarPoint(beggarPoint)
+			.beggarPoint(beggarPoint % 101) // 100점이 max
 			.build();
 	}
 }

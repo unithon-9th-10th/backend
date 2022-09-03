@@ -1,5 +1,6 @@
 package center.unit.beggar.expense.model;
 
+import center.unit.beggar.comment.model.BeggarType;
 import lombok.Value;
 
 import java.math.BigDecimal;
@@ -31,4 +32,5 @@ public class ExpenseDetailVo {
      * 지출 일자
      */
     LocalDate referenceDate;
+    BeggarType memberCommentType;
 }

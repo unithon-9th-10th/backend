@@ -74,7 +74,7 @@ public class ChallengeDetailService {
 			map.forEach((key, value) -> {
 				// comment 조회
 				List<ExpenseDetailVo> expenseDetailVoList = value.stream()
-					.map(it -> expenseService.getExpenseDetail(it.getExpenseId()))
+					.map(it -> expenseService.getExpenseDetail(memberId, it.getExpenseId()))
 					.collect(Collectors.toList());
 
 				BigDecimal sumAmount = expenseDetailVoList.stream()

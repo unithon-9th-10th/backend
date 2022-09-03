@@ -1,0 +1,24 @@
+package center.unit.beggar.member.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import center.unit.beggar.member.model.Member;
+import center.unit.beggar.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Service
+public class MemberService {
+
+	private final MemberRepository memberRepository;
+
+
+	@Transactional
+	public Long joinMember() {
+		Member member = new Member();
+		return memberRepository.save(member).getMemberId();
+	}
+}

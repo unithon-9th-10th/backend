@@ -152,7 +152,7 @@ public class ChallengeService {
 		int beggarPoint = 50;
 		List<Expense> expenses = expenseRepository.findByMember_memberIdAndChallenge_challengeId(
 			memberChallenge.getMember().getMemberId(),
-			memberChallenge.getMemberChallengeId()
+			memberChallenge.getChallenge().getChallengeId()
 		);
 
 		// 사용한 지출 합
@@ -180,7 +180,7 @@ public class ChallengeService {
 		beggarPoint += (higherCommentCount - lowerCommentCount) * 10;
 
 		return ChallengeMemberInfoVo.builder()
-			.challengeMemberId(memberChallenge.getMemberChallengeId())
+			.memberId(memberChallenge.getMember().getMemberId())
 			.memberNickname(memberChallenge.getMemberNickname())
 			.usedAmount(usedAmount)
 			.remainAmount(remainAmount)

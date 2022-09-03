@@ -28,6 +28,7 @@ public class MemberDetailVo {
      * 거지력 (0~100)
      */
     Integer memberPoint;
+    String memberNickname;
     /**
      * 일별 합계, 시간 내림차순 정렬
      */

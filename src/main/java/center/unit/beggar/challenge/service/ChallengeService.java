@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -191,5 +192,21 @@ public class ChallengeService {
 			.remainAmount(remainAmount)
 			.beggarPoint(beggarPoint % 101) // 100점이 max
 			.build();
+	}
+
+	public Challenge getLastEndedChallenge(Long memberId) {
+		List<MemberChallenge> challenges = memberChallengeRepository.findByMember_memberId(memberId);
+		Challenge challenge = challenges.stream()
+			.map(MemberChallenge::getChallenge)
+			.sorted(new Comparator<Challenge>() {
+				@Override
+				public int compare(Challenge o1, Challenge o2) {
+					return o2.getEndDate().compareTo(o1.getEndDate());
+				}
+			})
+			.findFirst()
+			.orElse(null);
+
+		return challenge;
 	}
 }

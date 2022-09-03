@@ -1,11 +1,8 @@
 package center.unit.beggar.challenge;
 
-import java.util.List;
-
 import center.unit.beggar.challenge.dto.ChallengeResponse;
 import center.unit.beggar.challenge.dto.request.AddMemberRequest;
 import center.unit.beggar.challenge.dto.request.ChallengePostDto;
-import center.unit.beggar.challenge.dto.response.ChallengeMemberInfoVo;
 import center.unit.beggar.challenge.dto.response.ChallengeRankResponse;
 import center.unit.beggar.challenge.dto.response.ChallengeResultResponse;
 import center.unit.beggar.challenge.model.Challenge;
@@ -55,11 +52,12 @@ public class ChallengeController {
         return ApiResponse.success(response);
     }
 
-    @GetMapping("/{challengeId}/results")
+    @GetMapping("/results")
     public ApiResponse<ChallengeResultResponse> getResult(
-        @PathVariable("challengeId") Long challengeId
+        @RequestHeader("X-BEGGAR-MEMBER-ID") Long memberId
     ) {
-        ChallengeResultResponse response = challengeService.getResultList(challengeId);
+        Challenge lastEndChallenge = challengeService.getLastEndedChallenge(memberId);
+        ChallengeResultResponse response = challengeService.getResultList(lastEndChallenge.getChallengeId());
         return ApiResponse.success(response);
     }
 }

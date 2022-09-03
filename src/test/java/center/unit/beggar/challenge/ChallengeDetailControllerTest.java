@@ -48,8 +48,6 @@ class ChallengeDetailControllerTest {
         // 챌린지 생성
         ChallengePostDto challengePostDto = new ChallengePostDto(
                 "title",
-                LocalDate.now(),
-                LocalDate.now().plusDays(3L),
                 3,
                 BigDecimal.valueOf(10000L)
         );

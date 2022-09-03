@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import center.unit.beggar.challenge.model.Challenge;
 
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
-    List<Challenge> findByChallengeIdInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(
+    List<Challenge> findByChallengeIdInAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
             List<Long> challengeIds,
             LocalDate startDate,
             LocalDate endDate

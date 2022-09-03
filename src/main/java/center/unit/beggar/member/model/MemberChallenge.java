@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import center.unit.beggar.challenge.model.Challenge;
 import center.unit.beggar.common.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,7 +35,10 @@ public class MemberChallenge extends BaseTimeEntity {
 
 	private String memberNickname;
 
-	@Enumerated(value = EnumType.STRING)
-	private CharacterType characterType;
-
+	@Builder
+	public MemberChallenge(Member member, Challenge challenge, String memberNickname) {
+		this.member = member;
+		this.challenge = challenge;
+		this.memberNickname = memberNickname;
+	}
 }

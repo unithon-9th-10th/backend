@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import center.unit.beggar.exception.ChallengeNotFoundException;
+import center.unit.beggar.exception.MemberNotFoundException;
+import center.unit.beggar.member.model.Member;
+import center.unit.beggar.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -23,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final MemberChallengeRepository memberChallengeRepository;
+    private final MemberRepository memberRepository;
 
     public MemberStatus resolveMemberStatus(Long memberId) {
         List<Long> challengeIds = memberChallengeRepository.findByMember_memberId(memberId)
@@ -60,10 +65,26 @@ public class ChallengeService {
                 .map(MemberChallenge::getChallenge)
                 .map(Challenge::getChallengeId).collect(Collectors.toList());
         LocalDate today = LocalDate.now();
-        return challengeRepository.findByChallengeIdInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(
+        return challengeRepository.findByChallengeIdInAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
                 challengeIds,
                 today,
                 today
         ).stream().findFirst();
+    }
+
+    @Transactional
+    public void addMember(Long memberId, Long challengeId, String nickname) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(ChallengeNotFoundException::new);
+        Optional<MemberChallenge> memberChallengeOptional = memberChallengeRepository.findByMember_memberIdAndChallenge_challengeId(memberId, challengeId);
+        if (memberChallengeOptional.isPresent()) {
+            return;
+        }
+        MemberChallenge memberChallenge = MemberChallenge.builder()
+                .member(member)
+                .challenge(challenge)
+                .memberNickname(nickname)
+                .build();
+        memberChallengeRepository.save(memberChallenge);
     }
 }

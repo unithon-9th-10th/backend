@@ -1,10 +1,11 @@
 package center.unit.beggar.challenge.repository;
 
-import center.unit.beggar.challenge.model.Challenge;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.time.LocalDate;
 import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import center.unit.beggar.challenge.model.Challenge;
 
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Challenge> findByChallengeIdInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(

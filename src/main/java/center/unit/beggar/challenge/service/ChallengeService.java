@@ -1,19 +1,20 @@
 package center.unit.beggar.challenge.service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import center.unit.beggar.challenge.dto.request.ChallengePostDto;
 import center.unit.beggar.challenge.model.Challenge;
 import center.unit.beggar.challenge.repository.ChallengeRepository;
 import center.unit.beggar.member.model.MemberChallenge;
 import center.unit.beggar.member.model.MemberStatus;
 import center.unit.beggar.member.repository.MemberChallengeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,4 +39,17 @@ public class ChallengeService {
         );
         return hasRunningChallenge ? MemberStatus.RUNNING : MemberStatus.FINISHED;
     }
+
+	public Challenge saveChallengeByRequestDto(ChallengePostDto requestDto) {
+		Challenge challenge = Challenge.builder()
+			.title(requestDto.getTitle())
+			.startDate(requestDto.getStartDate())
+			.endDate(requestDto.getEndDate())
+			.challengeDays(requestDto.getChallengeDays())
+			.amount(requestDto.getAmount())
+			.build();
+
+		challengeRepository.save(challenge);
+		return challenge;
+	}
 }

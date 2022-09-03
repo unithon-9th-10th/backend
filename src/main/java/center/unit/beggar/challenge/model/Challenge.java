@@ -12,6 +12,7 @@ import javax.persistence.Id;
 
 import center.unit.beggar.common.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +33,12 @@ public class Challenge extends BaseTimeEntity {
 
 	private BigDecimal amount;
 
+	@Builder
+	public Challenge(String title, LocalDate startDate, LocalDate endDate, Integer challengeDays, BigDecimal amount) {
+		this.title = title;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.challengeDays = challengeDays;
+		this.amount = amount;
+	}
 }

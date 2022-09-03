@@ -1,5 +1,6 @@
 package center.unit.beggar.challenge.service;
 
+import center.unit.beggar.challenge.dto.response.ChallengeMemberInfoVo;
 import center.unit.beggar.challenge.model.Challenge;
 import center.unit.beggar.challenge.model.ChallengeDetailVo;
 import center.unit.beggar.exception.ChallengeNotFoundException;
@@ -12,6 +13,7 @@ import center.unit.beggar.member.model.MemberChallenge;
 import center.unit.beggar.member.model.MemberDetailVo;
 import center.unit.beggar.member.repository.MemberChallengeRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,82 +26,92 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ChallengeDetailService {
-    private final ChallengeService challengeService;
-    private final MemberChallengeRepository memberChallengeRepository;
-    private final ExpenseService expenseService;
+	private final ChallengeService challengeService;
+	private final MemberChallengeRepository memberChallengeRepository;
+	private final ExpenseService expenseService;
 
-    public ChallengeDetailVo getChallengeDetailInfo(Long memberId) {
-        Challenge challenge = challengeService.getRunningChallenge(memberId)
-                .orElseThrow(ChallengeNotFoundException::new);
+	public ChallengeDetailVo getChallengeDetailInfo(Long memberId) {
+		Challenge challenge = challengeService.getRunningChallenge(memberId)
+			.orElseThrow(ChallengeNotFoundException::new);
 
-        // 멤버 목록 조회
-        List<MemberChallenge> memberChallenges
-                = memberChallengeRepository.findByChallenge_challengeId(challenge.getChallengeId());
-        List<Member> members = memberChallenges.stream().map(MemberChallenge::getMember).collect(Collectors.toList());
+		// 멤버 목록 조회
+		List<MemberChallenge> memberChallenges
+			= memberChallengeRepository.findByChallenge_challengeId(challenge.getChallengeId());
+		List<Member> members = memberChallenges.stream().map(MemberChallenge::getMember).collect(Collectors.toList());
 
-        List<MemberDetailVo> memberDetailVoList = new ArrayList<>();
+		Map<Long, ChallengeMemberInfoVo> memberInfoVoMap = challengeService.getChallengeMemberInfoVos(
+				challenge.getChallengeId()).stream()
+			.collect(Collectors.toMap(
+				ChallengeMemberInfoVo::getMemberId,
+				it -> it
+			));
 
-        // 지출 목록 조회 (코멘트까지 조회)
-        for (Member member : members) {
-            List<Expense> expenses = expenseService.getExpenses(member.getMemberId(), challenge.getChallengeId());
+		List<MemberDetailVo> memberDetailVoList = new ArrayList<>();
 
-            // startDate ~ min(now, endDate)
-            LocalDate from = challenge.getStartDate();
-            LocalDate to = LocalDate.now();
-            if (to.isAfter(challenge.getEndDate())) {
-                to = challenge.getEndDate();
-            }
-            Map<LocalDate, List<Expense>> map = new HashMap<>();
-            LocalDate current = from;
-            while (!current.isAfter(to)) {
-                // 날짜 키 생성
-                LocalDate referenceDate = current;
-                List<Expense> dailyExpenses = expenses.stream()
-                        .filter(it -> it.getCreatedAt().toLocalDate().equals(referenceDate))
-                        .collect(Collectors.toList());
-                map.put(current, dailyExpenses);
-                current = current.plusDays(1L);
-            }
+		// 지출 목록 조회 (코멘트까지 조회)
+		for (Member member : members) {
+			List<Expense> expenses = expenseService.getExpenses(member.getMemberId(), challenge.getChallengeId());
 
-            List<DailyExpenseVo> dailyExpenseVoList = new ArrayList<>();
-            map.forEach((key, value) -> {
-                // comment 조회
-                List<ExpenseDetailVo> expenseDetailVoList = value.stream()
-                        .map(it -> expenseService.getExpenseDetail(it.getExpenseId()))
-                        .collect(Collectors.toList());
+			// startDate ~ min(now, endDate)
+			LocalDate from = challenge.getStartDate();
+			LocalDate to = LocalDate.now();
+			if (to.isAfter(challenge.getEndDate())) {
+				to = challenge.getEndDate();
+			}
+			Map<LocalDate, List<Expense>> map = new HashMap<>();
+			LocalDate current = from;
+			while (!current.isAfter(to)) {
+				// 날짜 키 생성
+				LocalDate referenceDate = current;
+				List<Expense> dailyExpenses = expenses.stream()
+					.filter(it -> it.getCreatedAt().toLocalDate().equals(referenceDate))
+					.collect(Collectors.toList());
+				map.put(current, dailyExpenses);
+				current = current.plusDays(1L);
+			}
 
-                BigDecimal sumAmount = expenseDetailVoList.stream()
-                        .map(ExpenseDetailVo::getAmount)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+			List<DailyExpenseVo> dailyExpenseVoList = new ArrayList<>();
+			map.forEach((key, value) -> {
+				// comment 조회
+				List<ExpenseDetailVo> expenseDetailVoList = value.stream()
+					.map(it -> expenseService.getExpenseDetail(it.getExpenseId()))
+					.collect(Collectors.toList());
 
-                DailyExpenseVo dailyExpenseVo = new DailyExpenseVo(
-                        key,
-                        sumAmount,
-                        expenseDetailVoList
-                );
+				BigDecimal sumAmount = expenseDetailVoList.stream()
+					.map(ExpenseDetailVo::getAmount)
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                dailyExpenseVoList.add(dailyExpenseVo);
-            });
-            // 날짜 역순 정렬
-            dailyExpenseVoList.sort(Comparator.comparing(
-                    DailyExpenseVo::getReferenceDate,
-                    Comparator.nullsLast(Comparator.reverseOrder()))
-            );
+				DailyExpenseVo dailyExpenseVo = new DailyExpenseVo(
+					key,
+					sumAmount,
+					expenseDetailVoList
+				);
 
-            // FIXME: ranking
-            MemberDetailVo memberDetailVo = new MemberDetailVo(
-                    1,
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO,
-                    0,
-                    dailyExpenseVoList
-            );
+				dailyExpenseVoList.add(dailyExpenseVo);
+			});
+			// 날짜 역순 정렬
+			dailyExpenseVoList.sort(Comparator.comparing(
+				DailyExpenseVo::getReferenceDate,
+				Comparator.nullsLast(Comparator.reverseOrder()))
+			);
 
-            memberDetailVoList.add(memberDetailVo);
-        }
+			ChallengeMemberInfoVo challengeMemberInfoVo = memberInfoVoMap.get(member.getMemberId());
 
-        // 지출 목록 집계
-        return new ChallengeDetailVo(memberDetailVoList);
-    }
+			// FIXME: ranking
+			MemberDetailVo memberDetailVo = new MemberDetailVo(
+				challengeMemberInfoVo.getRank(),
+				challengeMemberInfoVo.getLimitAmount(),
+				challengeMemberInfoVo.getUsedAmount(),
+				challengeMemberInfoVo.getRemainAmount(),
+				challengeMemberInfoVo.getBeggarPoint(),
+				challengeMemberInfoVo.getMemberNickname(),
+				dailyExpenseVoList
+			);
+
+			memberDetailVoList.add(memberDetailVo);
+		}
+
+		// 지출 목록 집계
+		return new ChallengeDetailVo(memberDetailVoList);
+	}
 }

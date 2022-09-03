@@ -21,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -47,7 +49,7 @@ public class ExpenseService {
                 .content(expenseAddRequest.getContent())
                 .expenseType(expenseType)
                 .amount(expenseAddRequest.getAmount())
-                .referenceDate(expenseAddRequest.getReferenceDate())
+                .referenceDate(Optional.ofNullable(expenseAddRequest.getReferenceDate()).orElseGet(LocalDate::now))
                 .build();
         return expenseRepository.save(expense);
     }

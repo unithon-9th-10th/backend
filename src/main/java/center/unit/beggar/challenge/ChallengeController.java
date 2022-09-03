@@ -7,6 +7,7 @@ import center.unit.beggar.challenge.dto.request.AddMemberRequest;
 import center.unit.beggar.challenge.dto.request.ChallengePostDto;
 import center.unit.beggar.challenge.dto.response.ChallengeMemberInfoVo;
 import center.unit.beggar.challenge.dto.response.ChallengeRankResponse;
+import center.unit.beggar.challenge.dto.response.ChallengeResultResponse;
 import center.unit.beggar.challenge.model.Challenge;
 import center.unit.beggar.challenge.service.ChallengeService;
 import center.unit.beggar.dto.ApiResponse;
@@ -51,6 +52,14 @@ public class ChallengeController {
         @PathVariable("challengeId") Long challengeId
     ) {
         ChallengeRankResponse response = challengeService.getRankList(challengeId);
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/{challengeId}/results")
+    public ApiResponse<ChallengeResultResponse> getResult(
+        @PathVariable("challengeId") Long challengeId
+    ) {
+        ChallengeResultResponse response = challengeService.getResultList(challengeId);
         return ApiResponse.success(response);
     }
 }

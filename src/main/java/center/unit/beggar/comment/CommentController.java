@@ -13,7 +13,6 @@ import center.unit.beggar.comment.dto.response.CommentResponseStatus;
 import center.unit.beggar.comment.model.Comment;
 import center.unit.beggar.comment.service.CommentService;
 import center.unit.beggar.dto.ApiResponse;
-import center.unit.beggar.exception.CommentNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping("/api/v1/comments")
@@ -21,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class CommentController {
 
-	private CommentService commentService;
+	private final CommentService commentService;
 
 	@PostMapping
 	public ApiResponse<CommentResponseStatus> addComment(
@@ -36,7 +35,7 @@ public class CommentController {
 	}
 
 	@DeleteMapping
-	public ApiResponse<CommentResponseStatus> addComment(
+	public ApiResponse<CommentResponseStatus> deleteComment(
 		@RequestHeader("X-BEGGAR-MEMBER-ID") Long memberId,
 		@RequestBody CommentDeleteDto requestDto
 	) {

@@ -30,7 +30,7 @@ public class ChallengeController {
         return ApiResponse.success(response);
     }
 
-    @PutMapping("{challengeId}/members/{memberId}")
+    @PutMapping("/{challengeId}/members/{memberId}")
     public ApiResponse<ChallengeResponse> addMember(
             @PathVariable Long challengeId,
             @PathVariable Long memberId,

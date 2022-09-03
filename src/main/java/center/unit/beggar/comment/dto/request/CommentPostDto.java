@@ -7,6 +7,4 @@ import lombok.Getter;
 public class CommentPostDto {
 	private Long expenseId;
 	private BeggarType beggarType;
-	private String content;
-	private Integer beggarPoint;
 }

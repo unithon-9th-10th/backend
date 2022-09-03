@@ -37,15 +37,12 @@ public class Comment {
 	@JoinColumn(name = "expenseId")
 	private Expense expense;
 
-	private String content;
-	private Integer beggarPoint;
+	private Integer beggarPoint = 10;
 
 	@Builder
-	public Comment(BeggarType beggarType, Member member, Expense expense, String content, Integer beggarPoint) {
+	public Comment(BeggarType beggarType, Member member, Expense expense) {
 		this.beggarType = beggarType;
 		this.member = member;
 		this.expense = expense;
-		this.content = content;
-		this.beggarPoint = beggarPoint;
 	}
 }

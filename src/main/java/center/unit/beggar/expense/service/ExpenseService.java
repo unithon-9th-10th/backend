@@ -47,6 +47,7 @@ public class ExpenseService {
                 .content(expenseAddRequest.getContent())
                 .expenseType(expenseType)
                 .amount(expenseAddRequest.getAmount())
+                .referenceDate(expenseAddRequest.getReferenceDate())
                 .build();
         return expenseRepository.save(expense);
     }
@@ -63,7 +64,8 @@ public class ExpenseService {
         expense.edit(
                 requestDto.getContent(),
                 requestDto.getAmount(),
-                requestDto.getExpenseType()
+                requestDto.getExpenseType(),
+                requestDto.getReferenceDate()
         );
 
         return expense;

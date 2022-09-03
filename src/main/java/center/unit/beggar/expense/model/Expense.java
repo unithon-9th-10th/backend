@@ -34,10 +34,13 @@ public class Expense extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ExpenseType expenseType;
 
-    public void edit(String content, BigDecimal amount, ExpenseType expenseType) {
+    private LocalDate referenceDate;
+
+    public void edit(String content, BigDecimal amount, ExpenseType expenseType, LocalDate referenceDate) {
         this.content = content;
         this.amount = amount;
         this.expenseType = expenseType;
+        this.referenceDate = referenceDate;
     }
 
 }

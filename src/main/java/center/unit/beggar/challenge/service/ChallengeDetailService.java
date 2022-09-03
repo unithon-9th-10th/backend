@@ -52,23 +52,23 @@ public class ChallengeDetailService {
 		for (Member member : members) {
 			List<Expense> expenses = expenseService.getExpenses(member.getMemberId(), challenge.getChallengeId());
 
-			// startDate ~ min(now, endDate)
-			LocalDate from = challenge.getStartDate();
-			LocalDate to = LocalDate.now();
-			if (to.isAfter(challenge.getEndDate())) {
-				to = challenge.getEndDate();
-			}
-			Map<LocalDate, List<Expense>> map = new HashMap<>();
-			LocalDate current = from;
-			while (!current.isAfter(to)) {
-				// 날짜 키 생성
-				LocalDate referenceDate = current;
-				List<Expense> dailyExpenses = expenses.stream()
-					.filter(it -> it.getCreatedAt().toLocalDate().equals(referenceDate))
-					.collect(Collectors.toList());
-				map.put(current, dailyExpenses);
-				current = current.plusDays(1L);
-			}
+            // startDate ~ min(now, endDate)
+            LocalDate from = challenge.getStartDate();
+            LocalDate to = LocalDate.now();
+            if (to.isAfter(challenge.getEndDate())) {
+                to = challenge.getEndDate();
+            }
+            Map<LocalDate, List<Expense>> map = new HashMap<>();
+            LocalDate current = from;
+            while (!current.isAfter(to)) {
+                // 날짜 키 생성
+                LocalDate referenceDate = current;
+                List<Expense> dailyExpenses = expenses.stream()
+                        .filter(it -> it.getReferenceDate().equals(referenceDate))
+                        .collect(Collectors.toList());
+                map.put(current, dailyExpenses);
+                current = current.plusDays(1L);
+            }
 
 			List<DailyExpenseVo> dailyExpenseVoList = new ArrayList<>();
 			map.forEach((key, value) -> {

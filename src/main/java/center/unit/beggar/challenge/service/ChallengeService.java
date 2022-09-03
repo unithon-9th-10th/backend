@@ -63,10 +63,11 @@ public class ChallengeService {
 
 	@Transactional
 	public Challenge saveChallengeByRequestDto(ChallengePostDto requestDto) {
+		LocalDate today = LocalDate.now();
 		Challenge challenge = Challenge.builder()
 			.title(requestDto.getTitle())
-			.startDate(requestDto.getStartDate())
-			.endDate(requestDto.getEndDate())
+			.startDate(today)
+			.endDate(today.plusDays(requestDto.getChallengeDays()))
 			.challengeDays(requestDto.getChallengeDays())
 			.amount(requestDto.getAmount())
 			.build();

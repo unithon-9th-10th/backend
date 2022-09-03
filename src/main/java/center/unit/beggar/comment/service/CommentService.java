@@ -1,5 +1,6 @@
 package center.unit.beggar.comment.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -57,5 +58,9 @@ public class CommentService {
 			.build();
 
 		return commentRepository.save(comment);
+	}
+
+	public List<Comment> getComments(Long expenseId) {
+		return commentRepository.findByExpense_expenseId(expenseId);
 	}
 }

@@ -57,3 +57,11 @@ jobs:
       run: docker build -t $REPO:latest -t $REPO:${GITHUB_RUN_ID} .
     - name: Push Docker Image
       run: docker push $REPO
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: ${{ secrets.SCRIPT_PATH }}

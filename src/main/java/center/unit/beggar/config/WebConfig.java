@@ -12,10 +12,10 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         WebMvcConfigurer.super.addCorsMappings(registry);
 
-        registry.addMapping("/api/v1/**")
+        registry.addMapping("/**")
                 .allowedHeaders("X-BEGGAR-MEMBER-ID")
                 .allowedMethods("OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE")
-                .allowedOrigins("http://localhost:3000")
+                .allowedOriginPatterns("*")
                 .allowCredentials(true);
     }
 }

@@ -56,9 +56,15 @@ public class ExpenseService {
         return expenseRepository.findByMember_memberIdAndChallenge_challengeId(memberId, challengeId);
     }
 
-    public ExpenseDetailVo getExpenseDetail(Long expenseId) {
+    public ExpenseDetailVo getExpenseDetail(Long memberId, Long expenseId) {
         Expense expense = expenseRepository.findById(expenseId).orElseThrow(ExpenseNotFoundException::new);
         List<Comment> comments = commentService.getComments(expenseId);
+        BeggarType beggarType = comments.stream()
+            .filter(comment -> comment.getMember().getMemberId().equals(memberId))
+            .map(Comment::getBeggarType)
+            .findAny()
+            .orElse(null);
+
 
         return new ExpenseDetailVo(
                 expense.getAmount(),
@@ -66,7 +72,8 @@ public class ExpenseService {
                 expense.getContent(),
                 (int) comments.stream().filter(it -> it.getBeggarType() == BeggarType.HIGHER).count(),
                 (int) comments.stream().filter(it -> it.getBeggarType() == BeggarType.LOWER).count(),
-                expense.getReferenceDate()
+                expense.getReferenceDate(),
+                beggarType
         );
     }
 }

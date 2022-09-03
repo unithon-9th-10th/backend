@@ -8,9 +8,7 @@ import center.unit.beggar.comment.service.CommentService;
 import center.unit.beggar.exception.ChallengeNotFoundException;
 import center.unit.beggar.exception.ExpenseNotFoundException;
 import center.unit.beggar.exception.MemberNotFoundException;
-import center.unit.beggar.exception.UnauthorizedRequestException;
 import center.unit.beggar.expense.dto.request.ExpenseAddRequest;
-import center.unit.beggar.expense.dto.request.ExpenseEditRequest;
 import center.unit.beggar.expense.model.Expense;
 import center.unit.beggar.expense.model.ExpenseDetailVo;
 import center.unit.beggar.expense.model.ExpenseType;
@@ -54,25 +52,6 @@ public class ExpenseService {
         return expenseRepository.save(expense);
     }
 
-    @Transactional
-    public Expense edit(Long memberId, Long expenseId, ExpenseEditRequest requestDto) {
-        Expense expense = expenseRepository.findById(expenseId).orElseThrow(ExpenseNotFoundException::new);
-
-        // 수정 권한이 없는 경우
-        if (!expense.getMember().getMemberId().equals(memberId)) {
-            throw new UnauthorizedRequestException();
-        }
-
-        expense.edit(
-                requestDto.getContent(),
-                requestDto.getAmount(),
-                requestDto.getExpenseType(),
-                requestDto.getReferenceDate()
-        );
-
-        return expense;
-    }
-
     public List<Expense> getExpenses(Long memberId, Long challengeId) {
         return expenseRepository.findByMember_memberIdAndChallenge_challengeId(memberId, challengeId);
     }
@@ -87,7 +66,7 @@ public class ExpenseService {
                 expense.getContent(),
                 (int) comments.stream().filter(it -> it.getBeggarType() == BeggarType.HIGHER).count(),
                 (int) comments.stream().filter(it -> it.getBeggarType() == BeggarType.LOWER).count(),
-                expense.getCreatedAt().toLocalDate() // FIXME: refenceDate 추가
+                expense.getReferenceDate()
         );
     }
 }

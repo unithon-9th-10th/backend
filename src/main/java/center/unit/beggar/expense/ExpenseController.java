@@ -2,19 +2,11 @@ package center.unit.beggar.expense;
 
 import center.unit.beggar.dto.ApiResponse;
 import center.unit.beggar.expense.dto.request.ExpenseAddRequest;
-import center.unit.beggar.expense.dto.request.ExpenseEditRequest;
 import center.unit.beggar.expense.dto.response.ExpenseResponse;
 import center.unit.beggar.expense.model.Expense;
 import center.unit.beggar.expense.service.ExpenseService;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/expenses")
@@ -37,24 +29,4 @@ public class ExpenseController {
                 .build();
         return ApiResponse.success(expenseResponse);
     }
-
-    @PutMapping("{expenseId}")
-    public ApiResponse<ExpenseResponse> edit(
-        @RequestHeader("X-BEGGAR-MEMBER-ID") Long memberId,
-        @PathVariable("expenseId") Long expenseId,
-        @RequestBody ExpenseEditRequest expenseEditRequest
-    ) {
-        Expense expense = expenseService.edit(memberId, expenseId, expenseEditRequest);
-        ExpenseResponse expenseResponse = ExpenseResponse.builder()
-            .expenseId(expense.getExpenseId())
-            .challengeId(expense.getChallenge().getChallengeId())
-            .memberId(expense.getMember().getMemberId())
-            .expenseType(expense.getExpenseType())
-            .content(expense.getContent())
-            .build();
-
-        return ApiResponse.success(expenseResponse);
-    }
-
-
 }

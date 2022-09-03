@@ -39,6 +39,14 @@ public class CommentService {
 	@Transactional
 	//TODO
 	public Comment saveComment(Long memberId, CommentPostDto requestDto) {
+		Optional<Comment> memberComment = commentRepository.findByMember_MemberIdAndExpense_ExpenseId(
+			memberId, requestDto.getExpenseId()
+		);
+
+		if (memberComment.isPresent()) {
+			commentRepository.delete(memberComment.get());
+		}
+
 		Optional<Member> member = memberRepository.findById(memberId);
 		Optional<Expense> expense = expenseRepository.findById(requestDto.getExpenseId());
 
@@ -46,8 +54,6 @@ public class CommentService {
 			.beggarType(requestDto.getBeggarType())
 			.member(member.get())
 			.expense(expense.get())
-			.content(requestDto.getContent())
-			.beggarPoint(requestDto.getBeggarPoint())
 			.build();
 
 		return commentRepository.save(comment);

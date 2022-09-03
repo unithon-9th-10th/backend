@@ -6,6 +6,8 @@ import center.unit.beggar.expense.dto.response.ExpenseResponse;
 import center.unit.beggar.expense.model.Expense;
 import center.unit.beggar.expense.service.ExpenseService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExpenseController {
     private final ExpenseService expenseService;
 
+    @PostMapping
     public ApiResponse<ExpenseResponse> add(
             @RequestHeader("X-BEGGAR-MEMBER-ID") Long memberId,
             @RequestBody ExpenseAddRequest expenseAddRequest

@@ -2,6 +2,7 @@ package center.unit.beggar.challenge.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -52,4 +53,17 @@ public class ChallengeService {
 		challengeRepository.save(challenge);
 		return challenge;
 	}
+
+    public Optional<Challenge> getRunningChallenge(Long memberId) {
+        List<Long> challengeIds = memberChallengeRepository.findByMember_memberId(memberId)
+                .stream()
+                .map(MemberChallenge::getChallenge)
+                .map(Challenge::getChallengeId).collect(Collectors.toList());
+        LocalDate today = LocalDate.now();
+        return challengeRepository.findByChallengeIdInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(
+                challengeIds,
+                today,
+                today
+        ).stream().findFirst();
+    }
 }

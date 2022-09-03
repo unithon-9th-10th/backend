@@ -1,8 +1,12 @@
 package center.unit.beggar.challenge;
 
+import java.util.List;
+
 import center.unit.beggar.challenge.dto.ChallengeResponse;
 import center.unit.beggar.challenge.dto.request.AddMemberRequest;
 import center.unit.beggar.challenge.dto.request.ChallengePostDto;
+import center.unit.beggar.challenge.dto.response.ChallengeMemberInfoVo;
+import center.unit.beggar.challenge.dto.response.ChallengeRankResponse;
 import center.unit.beggar.challenge.model.Challenge;
 import center.unit.beggar.challenge.service.ChallengeService;
 import center.unit.beggar.dto.ApiResponse;
@@ -19,26 +23,34 @@ public class ChallengeController {
 
     @PostMapping
     public ApiResponse<ChallengeResponse> createChallenge(
-            @RequestBody ChallengePostDto requestDto
+        @RequestBody ChallengePostDto requestDto
     ) {
         Challenge challenge = challengeService.saveChallengeByRequestDto(requestDto);
 
         ChallengeResponse response = ChallengeResponse.builder()
-                .challengeId(challenge.getChallengeId())
-                .build();
+            .challengeId(challenge.getChallengeId())
+            .build();
 
         return ApiResponse.success(response);
     }
 
     @PutMapping("/{challengeId}/members/{memberId}")
     public ApiResponse<ChallengeResponse> addMember(
-            @PathVariable Long challengeId,
-            @PathVariable Long memberId,
-            @RequestBody AddMemberRequest addMemberRequest
+        @PathVariable Long challengeId,
+        @PathVariable Long memberId,
+        @RequestBody AddMemberRequest addMemberRequest
     ) {
         challengeService.addMember(memberId, challengeId, addMemberRequest.getNickname());
         Challenge challenge = challengeService.getRunningChallenge(memberId)
-                .orElseThrow(ChallengeNotFoundException::new);
+            .orElseThrow(ChallengeNotFoundException::new);
         return ApiResponse.success(ChallengeResponse.from(challenge));
+    }
+
+    @GetMapping("/{challengeId}/ranking")
+    public ApiResponse<ChallengeRankResponse> getRank(
+        @PathVariable("challengeId") Long challengeId
+    ) {
+        ChallengeRankResponse response = challengeService.getRankList(challengeId);
+        return ApiResponse.success(response);
     }
 }

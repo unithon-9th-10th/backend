@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
         WebMvcConfigurer.super.addCorsMappings(registry);
 
         registry.addMapping("/**")
-                .allowedHeaders("X-BEGGAR-MEMBER-ID")
+                .allowedHeaders("*")
                 .allowedMethods("OPTIONS", "HEAD", "GET", "POST", "PUT", "DELETE")
                 .allowedOriginPatterns("*")
                 .allowCredentials(true);

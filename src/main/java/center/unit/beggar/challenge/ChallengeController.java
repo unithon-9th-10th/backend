@@ -1,9 +1,8 @@
 package center.unit.beggar.challenge;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import center.unit.beggar.challenge.dto.request.AddMemberRequest;
+import center.unit.beggar.exception.ChallengeNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
 import center.unit.beggar.challenge.dto.ChallengeResponse;
 import center.unit.beggar.challenge.dto.request.ChallengePostDto;
@@ -11,6 +10,8 @@ import center.unit.beggar.challenge.model.Challenge;
 import center.unit.beggar.challenge.service.ChallengeService;
 import center.unit.beggar.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
 
 @RequestMapping("/api/v1/challenges")
 @RequiredArgsConstructor
@@ -32,4 +33,14 @@ public class ChallengeController {
 		return ApiResponse.success(response);
 	}
 
+	@PutMapping("/members/{memberId}")
+	public ApiResponse<ChallengeResponse> addMember(
+			@PathVariable Long memberId,
+			@RequestBody AddMemberRequest addMemberRequest
+	) {
+		challengeService.addMember(memberId, addMemberRequest.getNickname());
+		Challenge challenge = challengeService.getRunningChallenge(memberId)
+				.orElseThrow(ChallengeNotFoundException::new);
+		return ApiResponse.success(ChallengeResponse.from(challenge));
+	}
 }

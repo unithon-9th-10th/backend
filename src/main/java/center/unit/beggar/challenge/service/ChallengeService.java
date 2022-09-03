@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import center.unit.beggar.exception.ChallengeNotFoundException;
+import center.unit.beggar.exception.MemberNotFoundException;
+import center.unit.beggar.member.model.Member;
+import center.unit.beggar.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -23,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final MemberChallengeRepository memberChallengeRepository;
+    private final MemberRepository memberRepository;
 
     public MemberStatus resolveMemberStatus(Long memberId) {
         List<Long> challengeIds = memberChallengeRepository.findByMember_memberId(memberId)
@@ -65,5 +70,21 @@ public class ChallengeService {
                 today,
                 today
         ).stream().findFirst();
+    }
+
+    @Transactional
+    public void addMember(Long memberId, String nickname) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Challenge challenge = getRunningChallenge(memberId).orElseThrow(ChallengeNotFoundException::new);
+        Optional<MemberChallenge> memberChallengeOptional = memberChallengeRepository.findByMember_memberIdAndChallenge_challengeId(memberId, challenge.getChallengeId());
+        if (memberChallengeOptional.isPresent()) {
+            return;
+        }
+        MemberChallenge memberChallenge = MemberChallenge.builder()
+                .member(member)
+                .challenge(challenge)
+                .memberNickname(nickname)
+                .build();
+        memberChallengeRepository.save(memberChallenge);
     }
 }

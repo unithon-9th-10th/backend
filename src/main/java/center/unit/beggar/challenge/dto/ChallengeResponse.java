@@ -1,5 +1,6 @@
 package center.unit.beggar.challenge.dto;
 
+import center.unit.beggar.challenge.model.Challenge;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,5 +11,11 @@ public class ChallengeResponse {
 	@Builder
 	public ChallengeResponse(Long challengeId) {
 		this.challengeId = challengeId;
+	}
+
+	public static ChallengeResponse from(Challenge challenge) {
+		return ChallengeResponse.builder()
+				.challengeId(challenge.getChallengeId())
+				.build();
 	}
 }

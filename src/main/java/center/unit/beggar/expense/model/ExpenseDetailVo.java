@@ -33,4 +33,5 @@ public class ExpenseDetailVo {
      */
     LocalDate referenceDate;
     BeggarType memberCommentType;
+    Long expenseId;
 }

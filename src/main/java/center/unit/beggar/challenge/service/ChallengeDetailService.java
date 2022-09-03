@@ -37,7 +37,15 @@ public class ChallengeDetailService {
 		// 멤버 목록 조회
 		List<MemberChallenge> memberChallenges
 			= memberChallengeRepository.findByChallenge_challengeId(challenge.getChallengeId());
-		List<Member> members = memberChallenges.stream().map(MemberChallenge::getMember).collect(Collectors.toList());
+		List<Member> members = memberChallenges.stream()
+			.map(MemberChallenge::getMember)
+			.filter(member -> member.getMemberId().equals(memberId))
+			.collect(Collectors.toList());
+
+		memberChallenges.stream()
+			.map(MemberChallenge::getMember)
+			.filter(member -> !member.getMemberId().equals(memberId))
+			.forEach(members::add);
 
 		Map<Long, ChallengeMemberInfoVo> memberInfoVoMap = challengeService.getChallengeMemberInfoVos(
 				challenge.getChallengeId()).stream()

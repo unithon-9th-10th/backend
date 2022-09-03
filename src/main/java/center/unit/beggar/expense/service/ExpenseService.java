@@ -73,7 +73,8 @@ public class ExpenseService {
                 (int) comments.stream().filter(it -> it.getBeggarType() == BeggarType.HIGHER).count(),
                 (int) comments.stream().filter(it -> it.getBeggarType() == BeggarType.LOWER).count(),
                 expense.getReferenceDate(),
-                beggarType
+                beggarType,
+                expenseId
         );
     }
 }

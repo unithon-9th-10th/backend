@@ -65,7 +65,7 @@ public class ChallengeService {
                 .map(MemberChallenge::getChallenge)
                 .map(Challenge::getChallengeId).collect(Collectors.toList());
         LocalDate today = LocalDate.now();
-        return challengeRepository.findByChallengeIdInAndStartDateGreaterThanEqualAndEndDateLessThanEqual(
+        return challengeRepository.findByChallengeIdInAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
                 challengeIds,
                 today,
                 today
@@ -73,10 +73,10 @@ public class ChallengeService {
     }
 
     @Transactional
-    public void addMember(Long memberId, String nickname) {
+    public void addMember(Long memberId, Long challengeId, String nickname) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-        Challenge challenge = getRunningChallenge(memberId).orElseThrow(ChallengeNotFoundException::new);
-        Optional<MemberChallenge> memberChallengeOptional = memberChallengeRepository.findByMember_memberIdAndChallenge_challengeId(memberId, challenge.getChallengeId());
+        Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(ChallengeNotFoundException::new);
+        Optional<MemberChallenge> memberChallengeOptional = memberChallengeRepository.findByMember_memberIdAndChallenge_challengeId(memberId, challengeId);
         if (memberChallengeOptional.isPresent()) {
             return;
         }

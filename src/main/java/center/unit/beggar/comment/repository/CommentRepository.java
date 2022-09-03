@@ -10,4 +10,5 @@ import center.unit.beggar.comment.model.Comment;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 	Optional<Comment> findByMember_MemberIdAndExpense_ExpenseId(Long memberId, Long expenseId);
 	List<Comment> findByExpense_expenseIdIn(List<Long> expenseIds);
+	List<Comment> findByExpense_expenseId(Long expenseId);
 }

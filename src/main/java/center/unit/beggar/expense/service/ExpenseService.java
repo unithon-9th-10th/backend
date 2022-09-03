@@ -3,8 +3,11 @@ package center.unit.beggar.expense.service;
 import center.unit.beggar.challenge.model.Challenge;
 import center.unit.beggar.challenge.service.ChallengeService;
 import center.unit.beggar.exception.ChallengeNotFoundException;
+import center.unit.beggar.exception.ExpenseNotFoundException;
 import center.unit.beggar.exception.MemberNotFoundException;
+import center.unit.beggar.exception.UnauthorizedRequestException;
 import center.unit.beggar.expense.dto.request.ExpenseAddRequest;
+import center.unit.beggar.expense.dto.request.ExpenseEditRequest;
 import center.unit.beggar.expense.model.Expense;
 import center.unit.beggar.expense.model.ExpenseType;
 import center.unit.beggar.expense.repository.ExpenseRepository;
@@ -39,5 +42,23 @@ public class ExpenseService {
                 .amount(expenseAddRequest.getAmount())
                 .build();
         return expenseRepository.save(expense);
+    }
+
+    @Transactional
+    public Expense edit(Long memberId, Long expenseId, ExpenseEditRequest requestDto) {
+        Expense expense = expenseRepository.findById(expenseId).orElseThrow(ExpenseNotFoundException::new);
+
+        // 수정 권한이 없는 경우
+        if (!expense.getMember().getMemberId().equals(memberId)) {
+            throw new UnauthorizedRequestException();
+        }
+
+        expense.edit(
+            requestDto.getContent(),
+            requestDto.getAmount(),
+            requestDto.getExpenseType()
+        );
+
+        return expense;
     }
 }

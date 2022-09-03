@@ -26,6 +26,7 @@ public class CommentService {
 
 	private final ExpenseRepository expenseRepository;
 
+	@Transactional
 	public void deleteComment(Long memberId, CommentDeleteDto requestDto) {
 		Comment comment = commentRepository.findByMember_MemberIdAndExpense_ExpenseId(
 				memberId,
@@ -35,6 +36,7 @@ public class CommentService {
 		commentRepository.delete(comment);
 	}
 
+	@Transactional
 	//TODO
 	public Comment saveComment(Long memberId, CommentPostDto requestDto) {
 		Optional<Member> member = memberRepository.findById(memberId);

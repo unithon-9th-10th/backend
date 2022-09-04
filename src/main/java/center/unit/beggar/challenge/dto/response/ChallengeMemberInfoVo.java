@@ -31,6 +31,6 @@ public class ChallengeMemberInfoVo implements Comparable<ChallengeMemberInfoVo> 
 
 	@Override
 	public int compareTo(ChallengeMemberInfoVo o) {
-		return usedAmount.compareTo(o.remainAmount);
+		return usedAmount.compareTo(o.usedAmount);
 	}
 }

@@ -120,6 +120,6 @@ public class ChallengeDetailService {
 		}
 
 		// 지출 목록 집계
-		return new ChallengeDetailVo(memberDetailVoList);
+		return new ChallengeDetailVo(challenge.getTitle(), memberDetailVoList);
 	}
 }

@@ -7,5 +7,6 @@ import java.util.List;
 
 @Value
 public class ChallengeDetailVo {
+    String title;
     List<MemberDetailVo> memberDetailVoList;
 }

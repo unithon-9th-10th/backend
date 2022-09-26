@@ -34,7 +34,7 @@ public class ApiLogFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		log.info("[API URI] : {}", request.getRequestURI());
+		log.info("[{}] : {}", request.getMethod(), request.getRequestURI());
 
 		// ContentCachingXXXWrapper -> i/o Stream의 유실을 방지하기 위해 body를 caching하는 wrapper
 		ContentCachingRequestWrapper requestToCache = new ContentCachingRequestWrapper(request);
